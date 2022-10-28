@@ -1,0 +1,88 @@
+name: Typescript Test
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "src/**"
+      - ".github/workflows/**"
+      - "package.json"
+      - "package-lock.json"
+  pull_request:
+    paths:
+      - "src/**"
+      - ".github/workflows/**"
+      - "package.json"
+      - "package-lock.json"
+
+jobs:
+  lint-ci:
+    name: TSLint CI
+    if: "!contains(toJSON(github.event.commits.*.message), '[SKIP TEST]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint-ci
+
+  test-linux:
+    name: Test Linux
+    if: "!contains(toJSON(github.event.commits.*.message), '[SKIP TEST]')"
+    needs: lint-ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository.
+        uses: actions/checkout@v2
+
+      - name: Setup the node js environment with version 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+
+      - name: Run the test-full script to update packages and test the project.
+        run: npm run test-full
+
+  test-windows:
+    name: Test Windows
+    if: "!contains(toJSON(github.event.commits.*.message), '[SKIP TEST]')"
+    needs: lint-ci
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository.
+        uses: actions/checkout@v2
+
+      - name: Setup the node js environment with version 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+
+      - name: Run the test-full script to update packages and test the project.
+        run: npm run test-full
+
+  test-macos:
+    name: Test MacOS
+    if: "!contains(toJSON(github.event.commits.*.message), '[SKIP TEST]')"
+    needs: lint-ci
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository.
+        uses: actions/checkout@v2
+
+      - name: Setup the node js environment with version 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+
+      - name: Run the test-full script to update packages and test the project.
+        run: npm run test-full

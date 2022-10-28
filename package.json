@@ -1,0 +1,45 @@
+{
+  "name": "@mfdlabs/nodejs-template",
+  "version": "1.0.0-alpha.1",
+  "description": "A Node.js template that follows NJS-32551 contracts.",
+  "main": "lib/index.js",
+  "types": "lib/types",
+  "scripts": {
+    "test": "jest --config jestconfig.json --verbose --runInBand --passWithNoTests --silent=false",
+    "test-full": "npm ci && npm update && npm run test",
+    "build": "npm run clean && npm run compile",
+    "build-full": "npm ci && npm update && npm run build",
+    "clean": "tsc -b --clean tsconfig.json",
+    "compile": "tsc -b -v --listEmittedFiles tsconfig.json",
+    "lint": "eslint -c .eslintrc --fix",
+    "lint-ci": "eslint -c .eslintrc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "publish-package": "npm run lint && npm run test && npm run build && npm publish --access public"
+  },
+  "keywords": [
+    "Template"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+github.com/mfdlabs/nodejs-template.git"
+  },
+  "author": "MFDLABS Ops <ops@vmminfra.net>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/jest": "^28.1.2",
+    "@types/node": "^18.7.9",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jsdoc": "^39.3.6",
+    "jest": "^28.1.0",
+    "prettier": "^2.6.2",
+    "ts-jest": "^28.0.4",
+    "typescript": "^4.5.5"
+  },
+  "files": [
+    "lib/*",
+    "!lib/tests.js"
+  ]
+}
