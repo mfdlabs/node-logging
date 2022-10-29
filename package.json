@@ -1,11 +1,11 @@
 {
-  "name": "@mfdlabs/nodejs-template",
-  "version": "1.0.0-alpha.1",
-  "description": "A Node.js template that follows NJS-32551 contracts.",
+  "name": "@mfdlabs/logging",
+  "version": "1.0.0",
+  "description": "A Node.js library that implements the LOGDEV instrincts used by MFDLABS.",
   "main": "lib/index.js",
   "types": "lib/types",
   "scripts": {
-    "test": "jest --config jestconfig.json --verbose --runInBand --passWithNoTests --silent=false",
+    "test": "jest --config jestconfig.json --verbose --passWithNoTests --silent=false",
     "test-full": "npm ci && npm update && npm run test",
     "build": "npm run clean && npm run compile",
     "build-full": "npm ci && npm update && npm run build",
@@ -21,13 +21,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+github.com/mfdlabs/nodejs-template.git"
+    "url": "git+github.com/mfdlabs/node-logging.git"
   },
-  "author": "MFDLABS Ops <ops@vmminfra.net>",
+  "author": "Nikta Petko <petko@vmminfra.net>",
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^28.1.2",
-    "@types/node": "^18.7.9",
+    "@types/node": "^18.11.7",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
     "eslint": "^8.26.0",
@@ -41,5 +41,8 @@
   "files": [
     "lib/*",
     "!lib/tests.js"
-  ]
+  ],
+  "dependencies": {
+    "@mfdlabs/net": "^1.0.8"
+  }
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2022 MFDLABS Ops <ops@vmminfra.net>
+   Copyright 2022 Nikita Petko <petko@vmminfra.net>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,17 +15,23 @@
 */
 
 /*
-	File Name: index.spec.ts
-	Description: Default test specification for this package.
-	Written by: MFDLABS Ops
+	File Name: log_color.ts
+	Description: A simple enum to represent the log colors.
+	Written by: Nikita Petko
 */
 
-import { hello_world } from '..';
-
-describe('default test', () => {
-  describe('#hello_world', () => {
-    it('should return a string', () => {
-      expect(hello_world()).toBe('Hello, World!');
-    });
-  });
-});
+/**
+ * Represents the log colors.
+ *
+ * @enum {string} The log colors.
+ * @internal This enum is only ingested internally.
+ */
+export enum LogColor {
+  Reset = '\x1b[0m',
+  BrightBlack = '\x1b[90m',
+  BrightRed = '\x1b[91m',
+  BrightYellow = '\x1b[93m',
+  BrightBlue = '\x1b[94m',
+  BrightMagenta = '\x1b[95m',
+  BrightWhite = '\x1b[97m',
+}

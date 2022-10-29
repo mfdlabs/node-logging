@@ -1,5 +1,5 @@
 /*
-   Copyright 2022 MFDLABS Ops <ops@vmminfra.net>
+   Copyright 2022 Nikita Petko <petko@vmminfra.net>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,15 +15,21 @@
 */
 
 /*
-	File Name: index.ts
-	Description: The main export point for this package.
-	Written by: MFDLABS Ops
+	File Name: log_level.ts
+	Description: A simple enum to represent the log levels.
+	Written by: Nikita Petko
 */
 
-import logger from './logger';
-import dirname from './dirname';
-
-dirname.packageDirname = __dirname.substring(0, __dirname.lastIndexOf(process.platform === 'win32' ? '\\' : '/'));
-
-export { LogLevel } from './logger';
-export default logger;
+/**
+ * Represents the log level.
+ *
+ * @enum {string} The log levels.
+ */
+export enum LogLevel {
+  None = 'none',
+  Error = 'error',
+  Warning = 'warning',
+  Info = 'info',
+  Debug = 'debug',
+  Trace = 'trace',
+}
