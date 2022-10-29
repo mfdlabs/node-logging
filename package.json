@@ -17,7 +17,7 @@
     "publish-package": "npm run lint && npm run test && npm run build && npm publish --access public"
   },
   "keywords": [
-    "Template"
+    "logger"
   ],
   "repository": {
     "type": "git",
