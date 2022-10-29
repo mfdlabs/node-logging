@@ -1,3 +1,3 @@
-# Node.js Template
+# MFDLABS Node.js logger.
 
-This is a template for all node-js packages created by MFDLABS.
+Simple logger class for node.js that implements the LOGDEV instrincts used by MFDLABS.
