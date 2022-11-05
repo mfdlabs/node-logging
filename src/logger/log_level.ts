@@ -26,10 +26,33 @@
  * @enum {string} The log levels.
  */
 export enum LogLevel {
+  /**
+   * Do not log anything.
+   */
   None = 'none',
+
+  /**
+   * Only log up to error messages.
+   */
   Error = 'error',
+
+  /**
+   * Only log up to warning messages.
+   */
   Warning = 'warning',
+
+  /**
+   * Only log up to information messages.
+   */
   Info = 'info',
+
+  /**
+   * Only log up to debug messages.
+   */
   Debug = 'debug',
+
+  /**
+   * Only log up to trace messages.
+   */
   Trace = 'trace',
 }

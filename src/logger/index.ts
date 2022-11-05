@@ -1,4 +1,3 @@
-/* eslint-disable valid-jsdoc */
 /*
    Copyright 2022 Nikita Petko <petko@vmminfra.net>
 
@@ -22,6 +21,8 @@
 */
 
 /* eslint-disable @typescript-eslint/adjacent-overload-signatures */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+/* eslint-disable valid-jsdoc */
 
 ////////////////////////////////////////////////////////////////////////////////
 // Project imports
@@ -105,17 +106,27 @@ export default class Logger {
    */
   private static get _logFileBaseDirectory(): string {
     try {
-      if (Logger._logFileBaseDirectoryBacking === undefined)
-        Logger._logFileBaseDirectoryBacking = path.join(dirname.packageDirname, 'logs');
+      if (Logger._logFileBaseDirectoryBacking === undefined) {
+        /* istanbul ignore next */
+        if (environment.defaultLogFileDirectory === null || environment.defaultLogFileDirectory === undefined) {
+          Logger._logFileBaseDirectoryBacking = path.join(
+            path.resolve(dirname.packageDirname, '..', '..', '..'),
+            'logs',
+          );
+        } else {
+          Logger._logFileBaseDirectoryBacking = environment.defaultLogFileDirectory;
+        }
+      }
 
+      /* istanbul ignore next */
       return Logger._logFileBaseDirectoryBacking;
     } catch (error) {
-      return path.resolve();
+      return path.resolve('logs');
     }
   }
 
   /* Log String Stuff */
-  
+
   /**
    * @internal This is a private member.
    */
@@ -299,13 +310,12 @@ export default class Logger {
    */
   protected _getConstructedLongNonColorLogPrefix(): string {
     return util.format(
-      '[%s][%s][%s][%s][%s][%s][%s]',
+      '[%s][%s][%s][%s][%s][%s]',
       Logger._processId,
       Logger._architectureFmt,
       Logger._nodeVersion,
       Logger._localIp,
       Logger._hostname,
-      dirname.packageDirname,
       this._name,
     );
   }
@@ -336,13 +346,12 @@ export default class Logger {
    */
   protected _getConstructedLongColorLogPrefix(): string {
     return util.format(
-      '%s%s%s%s%s%s%s',
+      '%s%s%s%s%s%s',
       Logger._getDefaultColorSection(Logger._processId),
       Logger._getDefaultColorSection(Logger._architectureFmt),
       Logger._getDefaultColorSection(Logger._nodeVersion),
       Logger._getDefaultColorSection(Logger._localIp),
       Logger._getDefaultColorSection(Logger._hostname),
-      Logger._getDefaultColorSection(dirname.packageDirname),
       Logger._getDefaultColorSection(this._name),
     );
   }
@@ -574,7 +583,8 @@ export default class Logger {
         errorMessage = error?.toString() ?? '<unknown error>';
       }
 
-      this.warning('Unable to create log file directory. An unknown error has occurred \'%s\'.', errorMessage);
+      // eslint-disable-next-line quotes
+      this.warning("Unable to create log file directory. An unknown error has occurred '%s'.", errorMessage);
     }
   }
 
@@ -639,7 +649,8 @@ export default class Logger {
       }
 
       Logger.singleton.warning(
-        'Unable to create log file directory. An unknown error has occurred \'%s\'.',
+        // eslint-disable-next-line quotes
+        "Unable to create log file directory. An unknown error has occurred '%s'.",
         errorMessage,
       );
     }
@@ -674,7 +685,7 @@ export default class Logger {
   /**
    * Creates a new instance of the Logger class.
    * @param {string} name - The name of the logger.
-   * @param {string=} logLevel - The log level of the logger.
+   * @param {LogLevel=} logLevel - The log level of the logger.
    * @param {boolean=} logToFileSystem - If true, the logger will log to the file system.
    * @param {boolean=} logToConsole - If true, the logger will log to the console.
    * @param {boolean=} cutLogPrefix - If true, the logger will cut the log prefix.
@@ -684,10 +695,10 @@ export default class Logger {
   public constructor(
     name: string,
     logLevel: LogLevel = LogLevel.Info,
-    logToFileSystem = true,
-    logToConsole = true,
-    cutLogPrefix = true,
-    logWithColor = true,
+    logToFileSystem: boolean = true,
+    logToConsole: boolean = true,
+    cutLogPrefix: boolean = true,
+    logWithColor: boolean = true,
   ) {
     if (name === undefined || name === null) throw new ReferenceError(invalidConstructorName);
     if (typeof name !== 'string') throw new TypeError(invalidConstructorNameType);
