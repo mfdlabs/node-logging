@@ -141,7 +141,7 @@ export default class Environment {
   /* istanbul ignore next */
   public static get defaultLoggerCutLogPrefix(): boolean {
     /* istanbul ignore next */
-    return this._getOrDefault('DEFAULT_LOGGER_CUT_PREFIX', false);
+    return this._getOrDefault('DEFAULT_LOGGER_CUT_PREFIX', true);
   }
 
   /**
@@ -196,6 +196,17 @@ export default class Environment {
   /* istanbul ignore next */
   public static get defaultLoggerLogWithColor(): boolean {
     /* istanbul ignore next */
-    return this._getOrDefault('DEFAULT_LOGGER_LOG_WITH_COLOR', true); // default to info
+    return this._getOrDefault('DEFAULT_LOGGER_LOG_WITH_COLOR', true);
+  }
+
+  /**
+   * Used by the logger.
+   *
+   * The directory to write log files to.
+   */
+  /* istanbul ignore next */
+  public static get defaultLogFileDirectory(): string {
+    /* istanbul ignore next */
+    return this._getOrDefault('DEFAULT_LOG_FILE_DIRECTORY', null);
   }
 }
