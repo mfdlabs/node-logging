@@ -308,7 +308,7 @@ describe('Logger', () => {
 
       expect(singletonLogger).toBeDefined();
       expect(singletonLogger).toBeInstanceOf(logger);
-      expect(singletonLogger.name).toBe(environment.defaultLoggerName);
+      expect(singletonLogger.name).toBe(environment.singleton.defaultLoggerName);
     });
   });
 
@@ -318,7 +318,7 @@ describe('Logger', () => {
 
       expect(noopSingletonLogger).toBeDefined();
       expect(noopSingletonLogger).toBeInstanceOf(logger);
-      expect(noopSingletonLogger.name).toBe(environment.defaultLoggerName + '_noop');
+      expect(noopSingletonLogger.name).toBe(environment.singleton.defaultLoggerName + '_noop');
     });
   });
 
