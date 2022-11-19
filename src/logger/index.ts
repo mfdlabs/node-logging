@@ -108,13 +108,13 @@ export default class Logger {
     try {
       if (Logger._logFileBaseDirectoryBacking === undefined) {
         /* istanbul ignore next */
-        if (environment.defaultLogFileDirectory === null || environment.defaultLogFileDirectory === undefined) {
+        if (environment.singleton.defaultLogFileDirectory === null || environment.singleton.defaultLogFileDirectory === undefined) {
           Logger._logFileBaseDirectoryBacking = path.join(
             path.resolve(dirname.packageDirname, '..', '..', '..'),
             'logs',
           );
         } else {
-          Logger._logFileBaseDirectoryBacking = environment.defaultLogFileDirectory;
+          Logger._logFileBaseDirectoryBacking = environment.singleton.defaultLogFileDirectory;
         }
       }
 
@@ -602,7 +602,7 @@ export default class Logger {
     Logger.singleton.log('Try clear local log files...');
 
     try {
-      if (environment.persistLocalLogs) {
+      if (environment.singleton.persistLocalLogs) {
         if (override) {
           Logger.singleton.warning('Override flag set. Clearing local log files.');
         } else {
@@ -756,12 +756,12 @@ export default class Logger {
    */
   public static get singleton(): Logger {
     return (Logger._singleton ??= new Logger(
-      environment.defaultLoggerName,
-      environment.defaultLogLevel,
-      environment.defaultLoggerLogToFileSystem,
-      environment.defaultLoggerLogToConsole,
-      environment.defaultLoggerCutLogPrefix,
-      environment.defaultLoggerLogWithColor,
+      environment.singleton.defaultLoggerName,
+      environment.singleton.defaultLogLevel,
+      environment.singleton.defaultLoggerLogToFileSystem,
+      environment.singleton.defaultLoggerLogToConsole,
+      environment.singleton.defaultLoggerCutLogPrefix,
+      environment.singleton.defaultLoggerLogWithColor,
     ));
   }
 
@@ -772,7 +772,7 @@ export default class Logger {
    */
   public static get noopSingleton(): Logger {
     return (Logger._noopSingletonLogger ??= new Logger(
-      environment.defaultLoggerName + '_noop',
+      environment.singleton.defaultLoggerName + '_noop',
       LogLevel.None,
       false,
       false,
