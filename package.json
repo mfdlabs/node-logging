@@ -1,6 +1,6 @@
 {
   "name": "@mfdlabs/logging",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Node.js library that implements the LOGDEV instrincts used by MFDLABS.",
   "main": "lib/index.js",
   "types": "lib/types",
@@ -43,7 +43,7 @@
     "!lib/tests.js"
   ],
   "dependencies": {
-    "@mfdlabs/environment": "^1.0.0",
+    "@mfdlabs/environment": "^1.0.3",
     "@mfdlabs/net": "^1.0.8"
   }
 }
