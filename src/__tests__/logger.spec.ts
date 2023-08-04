@@ -29,7 +29,6 @@ import * as path from 'path';
 import * as events from 'events';
 
 jest.setTimeout(10000);
-jest.useFakeTimers();
 
 // Set up packageDirname for testing. It should be this file's directory.
 dirname.packageDirname = path.resolve();
@@ -322,6 +321,16 @@ describe('Logger', () => {
     });
   });
 
+  describe('get_globalPrefixEntries', () => {
+    it('should return the globalPrefixEntries property', () => {
+      logger.globalPrefixEntries = [() => 'test'];
+
+      expect(logger.globalPrefixEntries).toBeDefined();
+      expect(logger.globalPrefixEntries).toBeInstanceOf(Array);
+      expect(logger.globalPrefixEntries.length).toBe(1);
+    });
+  });
+
   describe('get_name', () => {
     it('should return the name of the logger', () => {
       const log = new logger('logger', LogLevel.Trace, true, true, false);
@@ -423,6 +432,53 @@ describe('Logger', () => {
       endMock(fs, 'existsSync');
       endMock(fs, 'rmSync');
       endMock(fs, 'mkdirSync');
+    });
+  });
+
+  describe('get_customPrefixEntries', () => {
+    it('should return the customPrefixEntries property of the logger', () => {
+      const log = new logger('logger', LogLevel.Trace, true, true, false);
+      log.customPrefixEntries = [() => 'test'];
+
+      expect(log.customPrefixEntries).toBeDefined();
+      expect(log.customPrefixEntries).toBeInstanceOf(Array);
+      expect(log.customPrefixEntries.length).toBe(1);
+    });
+  });
+
+  describe('set_globalPrefixEntries', () => {
+    it('should throw if the value is not undefined or null and is not an array of functions', () => {
+      expect(() => {
+        logger.globalPrefixEntries = undefined as any;
+      }).not.toThrow();
+
+      expect(() => {
+        logger.globalPrefixEntries = null as any;
+      }).not.toThrow();
+
+      expect(() => {
+        logger.globalPrefixEntries = 1 as any;
+      }).toThrow();
+
+      expect(() => {
+        logger.globalPrefixEntries = ['test'] as any;
+      }).toThrow();
+
+      expect(() => {
+        logger.globalPrefixEntries = [null] as any;
+      }).toThrow();
+
+      logger.globalPrefixEntries = undefined;
+    });
+
+    it('should set the globalPrefixEntries property of the logger', () => {
+      logger.globalPrefixEntries = [() => 'test'];
+
+      expect(logger.globalPrefixEntries).toBeDefined();
+      expect(logger.globalPrefixEntries).toBeInstanceOf(Array);
+      expect(logger.globalPrefixEntries.length).toBe(1);
+
+      logger.globalPrefixEntries = undefined;
     });
   });
 
@@ -695,6 +751,44 @@ describe('Logger', () => {
       log.logWithColor = false;
 
       expect(log.logWithColor).toBe(false);
+    });
+  });
+
+  describe('set_customPrefixEntries', () => {
+    it('should throw if the value is not undefined or null and is not an array of functions', () => {
+      const log = new logger('logger', LogLevel.Trace, true, true, false);
+
+      expect(() => {
+        log.customPrefixEntries = undefined as any;
+      }).not.toThrow();
+
+      expect(() => {
+        log.customPrefixEntries = null as any;
+      }).not.toThrow();
+
+      expect(() => {
+        log.customPrefixEntries = 1 as any;
+      }).toThrow();
+
+      expect(() => {
+        log.customPrefixEntries = ['test'] as any;
+      }).toThrow();
+
+      expect(() => {
+        log.customPrefixEntries = [null] as any;
+      }).toThrow();
+    });
+
+    it('should set the customPrefixEntries property of the logger', () => {
+      const log = new logger('logger', LogLevel.Trace, true, true, false);
+
+      log.customPrefixEntries = [() => 'test'];
+
+      expect(log.customPrefixEntries).toBeDefined();
+      expect(log.customPrefixEntries).toBeInstanceOf(Array);
+      expect(log.customPrefixEntries.length).toBe(1);
+
+      log.customPrefixEntries = undefined;
     });
   });
 
@@ -1546,7 +1640,7 @@ describe('Logger', () => {
       log['_lockedFileWriteStream'] = fs.createWriteStream('abc');
 
       mock(log['_lockedFileWriteStream'], 'write', () => {
-        throw undefined;
+        throw undefined; /////////////////////////////////////////////////////////////////////////////
       });
 
       await log.log('blah');

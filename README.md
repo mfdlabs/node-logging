@@ -50,22 +50,25 @@ You can either use logger.singleton or logger.noopSingleton to access the logger
 | cutLogPrefix    | boolean       | *true*          | Should the logging prefix be cut? It is advised that this is used in production environments as it reduces the resources used by loggers.                                         |
 | logWithColor    | boolean       | *true*          | Should the ouput be colorful? It is advised that this is disabled in production as it creates larger strings in order to make them colorful.                                      |
 
+
 # Properties
 
 The following properties are available for the logger class:
 
-| Property Name             | Property Type | Has Setter? | Is Static? | Description                                                                                                                                                                              |
-|---------------------------|---------------|-------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| singleton                 | logger        | No          | Yes        | A static instance of the logger, it is advised you use this over creating new loggers if you don't require logs to be seperated by category.                                             |
-| noopSingleton             | logger        | No          | Yes        | Essentially the same as logger.singleton except this will do nothing, i.e the logLevel is None, and it doesn't log the the console or log files.                                         |
-| name                      | string        | Yes         | No         | The name of the logger, you can change this at runtime if you wish, but it must be a unique name.                                                                                        |
-| logLevel                  | LogLevel      | Yes         | No         | The level of the logger, you can change this at runtime but it must be a valid LogLevel enum.                                                                                            |
-| logToFileSystem           | boolean       | Yes         | No         | Is this logger writing to log files? This can be changed at runtime and will setup log files when the value is set or will teardown it's current file stream if unset.                   |
-| logToConsole              | boolean       | Yes         | No         | Is this logger writing to the console? This can be changed at runtime.                                                                                                                   |
-| cutLogPrefix              | boolean       | Yes         | No         | Is the logger's prefix being cut? This can be changed at runtime and is advised for production environments as log prefixes can get lengthy.                                             |
-| logWithColor              | boolean       | Yes         | No         | Is the logger's console output colorful? This can be changed at runtime and is advised to be disabled in production environments as it extends the log string with invisible characters. |
-| fileName                  | string        | No          | No         | The name of the file that the file system logger is writing to. This is only set if logger.logToFileSystem is enabled and didn't fail to create the log file.                            |
-| fullyQualifiedLogFileName | string        | No          | No         | The fully qualified name of the file that the file system logger is writing to. Essentially the same as logger.fileName except this includes the full path.                              |
+| Property Name             | Property Type     | Has Setter? | Is Static? | Description                                                                                                                                                                              |
+|---------------------------|-------------------|-------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| singleton                 | logger            | No          | Yes        | A static instance of the logger, it is advised you use this over creating new loggers if you don't require logs to be seperated by category.                                             |
+| noopSingleton             | logger            | No          | Yes        | Essentially the same as logger.singleton except this will do nothing, i.e the logLevel is None, and it doesn't log the the console or log files.                                         |
+| name                      | string            | Yes         | No         | The name of the logger, you can change this at runtime if you wish, but it must be a unique name.                                                                                        |
+| logLevel                  | LogLevel          | Yes         | No         | The level of the logger, you can change this at runtime but it must be a valid LogLevel enum.                                                                                            |
+| logToFileSystem           | boolean           | Yes         | No         | Is this logger writing to log files? This can be changed at runtime and will setup log files when the value is set or will teardown it's current file stream if unset.                   |
+| logToConsole              | boolean           | Yes         | No         | Is this logger writing to the console? This can be changed at runtime.                                                                                                                   |
+| cutLogPrefix              | boolean           | Yes         | No         | Is the logger's prefix being cut? This can be changed at runtime and is advised for production environments as log prefixes can get lengthy.                                             |
+| logWithColor              | boolean           | Yes         | No         | Is the logger's console output colorful? This can be changed at runtime and is advised to be disabled in production environments as it extends the log string with invisible characters. |
+| fileName                  | string            | No          | No         | The name of the file that the file system logger is writing to. This is only set if logger.logToFileSystem is enabled and didn't fail to create the log file.                            |
+| fullyQualifiedLogFileName | string            | No          | No         | The fully qualified name of the file that the file system logger is writing to. Essentially the same as logger.fileName except this includes the full path.                              |
+| globalPrefixEntries       | (() => string)[]? | Yes         | Yes        | A list of getters that will be prepended before the log level in the logger message for all loggers.                                                                                     |
+| customPrefixEntries       | (() => string)[]? | Yes         | No         | A list of getters that will be prepended before the log level in the logger message for the specific logger.                                                                             |
 
 # Methods
 

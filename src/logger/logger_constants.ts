@@ -113,6 +113,24 @@ export const invalidSetterBooleanValue: string = 'The `value` argument must be a
 export const invalidSetterStringValue: string = 'The `value` argument must be a string.' as const;
 
 /**
+ * This is an error message for when you supply a value to an array setter that is not an array.
+ * 
+ * @internal This is only ingested internally.
+ * @constant
+ * @type {string} The error message.
+ */
+export const invalidSetterArrayValue: string = 'The `value` argument must be an array.' as const;
+
+/**
+ * This is an error message for when you supply a value to an array setter that is not an array of functions.
+ * 
+ * @internal This is only ingested internally.
+ * @constant
+ * @type {string} The error message.
+ */
+export const invalidSetterArrayValueFunction: string = 'The `value` argument must be an array of functions.' as const;
+
+/**
 * This is an error message for when you supply a null or undefined name to the constructor.
 *
 * @internal This is only ingested internally.
