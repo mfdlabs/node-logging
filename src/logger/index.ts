@@ -61,6 +61,8 @@ import {
   invalidConstructorLogToConsoleType,
   invalidConstructorCutLogPrefixType,
   invalidConstructorLogToFileSystemType,
+  invalidSetterArrayValue,
+  invalidSetterArrayValueFunction,
 } from './logger_constants';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +110,10 @@ export default class Logger {
     try {
       if (Logger._logFileBaseDirectoryBacking === undefined) {
         /* istanbul ignore next */
-        if (environment.singleton.defaultLogFileDirectory === null || environment.singleton.defaultLogFileDirectory === undefined) {
+        if (
+          environment.singleton.defaultLogFileDirectory === null ||
+          environment.singleton.defaultLogFileDirectory === undefined
+        ) {
           Logger._logFileBaseDirectoryBacking = path.join(
             path.resolve(dirname.packageDirname, '..', '..', '..'),
             'logs',
@@ -174,6 +179,11 @@ export default class Logger {
    */
   private static _noopSingletonLogger: Logger = null;
 
+  /**
+   * @internal This is a private member.
+   */
+  private static _globalPrefixEntries: (() => string)[] = undefined;
+
   //////////////////////////////////////////////////////////////////////////////
   // Private Readonly Properties
   //////////////////////////////////////////////////////////////////////////////
@@ -232,6 +242,10 @@ export default class Logger {
    * @internal This is a private member.
    */
   private _cachedColorPrefix: string;
+  /**
+   * @internal This is a private member.
+   */
+  private _customPrefixEntries: (() => string)[] = undefined;
 
   //////////////////////////////////////////////////////////////////////////////
   // Private/Protected Static Helper Methods
@@ -308,6 +322,19 @@ export default class Logger {
   /**
    * @internal This is a private member.
    */
+  protected static _getConstructedCustomNonColorLogPrefix(customPrefixEntries: (() => string)[]): string {
+    if (customPrefixEntries === undefined || customPrefixEntries === null) return '';
+
+    const results = [];
+
+    for (const entry of customPrefixEntries) results.push(entry());
+
+    return results.map((result) => `[${result}]`).join('');
+  }
+
+  /**
+   * @internal This is a private member.
+   */
   protected _getConstructedLongNonColorLogPrefix(): string {
     return util.format(
       '[%s][%s][%s][%s][%s][%s]',
@@ -359,6 +386,19 @@ export default class Logger {
   /**
    * @internal This is a protected member.
    */
+  protected static _getConstructedCustomColorLogPrefix(customPrefixEntries: (() => string)[]): string {
+    if (customPrefixEntries === undefined || customPrefixEntries === null) return '';
+
+    const results = [];
+
+    for (const entry of customPrefixEntries) results.push(entry());
+
+    return results.map((result) => Logger._getDefaultColorSection(result)).join('');
+  }
+
+  /**
+   * @internal This is a protected member.
+   */
   protected _constructLoggerMessage(logLevel: LogLevel, format: string, ...args: unknown[]): string {
     let formattedMessage = args?.length === 0 ? format : util.format(format, ...args);
 
@@ -367,25 +407,29 @@ export default class Logger {
 
     if (this._cutLogPrefix)
       return util.format(
-        '[%s]%s[%s] %s\n',
+        '[%s]%s%s%s[%s] %s\n',
         Logger._getDateNowIsoString(),
         this._getNonColorLogPrefix(),
+        Logger._getConstructedCustomNonColorLogPrefix(this._customPrefixEntries),
+        Logger._getConstructedCustomNonColorLogPrefix(Logger._globalPrefixEntries),
         logLevel.toUpperCase(),
         formattedMessage,
       );
 
     return util.format(
-      '[%s][%s]%s[%s] %s\n',
+      '[%s][%s]%s%s%s[%s] %s\n',
       Logger._getDateNowIsoString(),
       Logger._getUptime(),
       this._getNonColorLogPrefix(),
+      Logger._getConstructedCustomNonColorLogPrefix(this._customPrefixEntries),
+      Logger._getConstructedCustomNonColorLogPrefix(Logger._globalPrefixEntries),
       logLevel.toUpperCase(),
       formattedMessage,
     );
   }
 
   /**
-   * @internal This is a protected member.
+   * @internal This is a protected member.customPrefixEntries
    */
   protected _constructColoredLoggerMessage(
     logLevel: LogLevel,
@@ -400,9 +444,11 @@ export default class Logger {
 
     if (this._cutLogPrefix)
       return util.format(
-        '%s%s%s %s%s%s\n',
+        '%s%s%s%s%s %s%s%s\n',
         Logger._getDefaultColorSection(Logger._getDateNowIsoString()),
         this._getColorPrefix(),
+        Logger._getConstructedCustomColorLogPrefix(this._customPrefixEntries),
+        Logger._getConstructedCustomColorLogPrefix(Logger._globalPrefixEntries),
         Logger._getColorSection(color, logLevel.toUpperCase()),
         color,
         formattedMessage,
@@ -410,10 +456,12 @@ export default class Logger {
       );
 
     return util.format(
-      '%s%s%s%s %s%s%s\n',
+      '%s%s%s%s%s%s %s%s%s\n',
       Logger._getDefaultColorSection(Logger._getDateNowIsoString()),
       Logger._getDefaultColorSection(Logger._getUptime()),
       this._getColorPrefix(),
+      Logger._getConstructedCustomColorLogPrefix(this._customPrefixEntries),
+      Logger._getConstructedCustomColorLogPrefix(Logger._globalPrefixEntries),
       Logger._getColorSection(color, logLevel.toUpperCase()),
       color,
       formattedMessage,
@@ -781,6 +829,37 @@ export default class Logger {
     ));
   }
 
+  /**
+   * Gets the global prefix entries.
+   * @returns {(() => string)[]} - The global prefix entries.
+   * @note These are the entries that will be prepended to every log message for every logger.
+   */
+  public static get globalPrefixEntries(): (() => string)[] | undefined {
+    return Logger._globalPrefixEntries;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Public Static Setters
+  ////////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Sets the global prefix entries.
+   * @param {(() => string)[]?} value - The global prefix entries.
+   * @note These are the entries that will be prepended to every log message for every logger.
+   */
+  public static set globalPrefixEntries(value: (() => string)[] | undefined) {
+    if (value !== undefined && value !== null) {
+      if (!Array.isArray(value)) throw new TypeError(invalidSetterArrayValue);
+
+      for (const entry of value) {
+        if (entry === undefined || entry === null) throw new ReferenceError(setterValueCannotBeUndefinedOrNull);
+        if (typeof entry !== 'function') throw new TypeError(invalidSetterArrayValueFunction);
+      }
+    }
+
+    Logger._globalPrefixEntries = value;
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Public Getters
   ////////////////////////////////////////////////////////////////////////////////
@@ -850,6 +929,15 @@ export default class Logger {
    */
   public get fullyQualifiedLogFileName(): string {
     return this._fullyQualifiedLogFileName;
+  }
+
+  /**
+   * Gets the custom prefix entries.
+   * @returns {(() => string)[]} - The custom prefix entries.
+   * @note These are the entries that will be prepended to every log message for this logger.
+   */
+  public get customPrefixEntries(): (() => string)[] {
+    return this._customPrefixEntries;
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -926,6 +1014,24 @@ export default class Logger {
     if (typeof value !== 'boolean') throw new TypeError(invalidSetterBooleanValue);
 
     this._logWithColor = value;
+  }
+
+  /**
+   * Sets the custom prefix entries.
+   * @param {(() => string)[]?} value - The custom prefix entries.
+   * @note These are the entries that will be prepended to every log message for this logger.
+   */
+  public set customPrefixEntries(value: (() => string)[] | undefined) {
+    if (value !== undefined && value !== null) {
+      if (!Array.isArray(value)) throw new TypeError(invalidSetterArrayValue);
+
+      for (const entry of value) {
+        if (entry === undefined || entry === null) throw new ReferenceError(setterValueCannotBeUndefinedOrNull);
+        if (typeof entry !== 'function') throw new TypeError(invalidSetterArrayValueFunction);
+      }
+    }
+
+    this._customPrefixEntries = value;
   }
 
   ////////////////////////////////////////////////////////////////////////////////
